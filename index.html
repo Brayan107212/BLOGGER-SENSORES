@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electrónica Aplicada | Blog académico</title>
+<style>
+:root{
+  --bg:#0b1020; --card:#121a2f; --card2:#18233d; --text:#edf2ff;
+  --muted:#aeb9d3; --accent:#62d6ff; --accent2:#8b7cff; --line:#2b3a5f;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#080d19,#101a31 55%,#0b1020);color:var(--text);line-height:1.65}
+header{padding:70px 7%;background:radial-gradient(circle at 80% 20%,#243a72 0,#10182d 35%,#080d19 75%);border-bottom:1px solid var(--line)}
+.badge{display:inline-block;padding:7px 13px;border:1px solid #38517f;border-radius:20px;color:var(--accent);font-size:.82rem}
+h1{font-size:clamp(2.2rem,5vw,4.7rem);line-height:1.05;margin:18px 0 12px}
+h2{font-size:2rem;margin-top:0} h3{color:var(--accent)}
+p{color:#d6def1}.muted{color:var(--muted)}
+.wrap{max-width:1120px;margin:auto;padding:0 22px}
+nav{position:sticky;top:0;z-index:10;background:#0b1020ee;backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:10px 0}
+nav .wrap{display:flex;gap:8px;overflow:auto}
+nav a{color:#cbd5ec;text-decoration:none;white-space:nowrap;padding:8px 11px;border-radius:8px}
+nav a:hover{background:var(--card2);color:white}
+section{padding:60px 0;border-bottom:1px solid #1e2944}
+.card{background:linear-gradient(145deg,var(--card),#0f172a);border:1px solid var(--line);border-radius:18px;padding:25px;margin:18px 0;box-shadow:0 12px 35px #0003}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.kicker{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.formula{font-size:1.2rem;background:#0a1122;border:1px solid var(--line);padding:15px;border-radius:12px;text-align:center;font-family:Georgia,serif}
+.sim{background:#07101f;border:1px solid #30446e;border-radius:16px;padding:18px}
+canvas{width:100%;height:250px;background:#050a14;border-radius:10px;border:1px solid #263756}
+.controls{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
+label{font-size:.9rem;color:var(--muted)}
+input,select,button{background:#0d172b;color:white;border:1px solid #38517f;border-radius:8px;padding:9px}
+button{cursor:pointer;background:#182a4a}
+button:hover{background:#233d69}
+.result{padding:12px;border-left:3px solid var(--accent);background:#0b1629;border-radius:8px;margin-top:12px}
+table{width:100%;border-collapse:collapse}.table-wrap{overflow:auto}
+th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--accent)}
+.quote{border-left:4px solid var(--accent2);padding:12px 18px;background:#121a2f;border-radius:0 10px 10px 0}
+footer{padding:45px 0;color:var(--muted);text-align:center}
+.small{font-size:.9rem}.author{font-weight:bold;color:white}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap">
+<span class="badge">BLOG ACADÉMICO · INGENIERÍA ELECTRÓNICA · 2026</span>
+<h1>Electrónica aplicada:<br>de la señal al procesamiento</h1>
+<p style="font-size:1.15rem;max-width:800px">Un recorrido práctico por señales, variables de proceso, sensores, señales inteligentes y amplificadores operacionales, acompañado de ejemplos y simulaciones realizadas para comprender el comportamiento de cada sistema.</p>
+<p class="author">Autor: Brayan David Sarmiento Vega</p>
+</div>
+</header>
+
+<nav><div class="wrap">
+<a href="#inicio">Inicio</a><a href="#senales">Señales</a><a href="#variables">Variables</a><a href="#sensores">Sensores</a><a href="#inteligentes">Señales inteligentes</a><a href="#inversor">Inversora</a><a href="#noinversor">No inversora</a><a href="#sumador">Sumador</a><a href="#restador">Restador</a><a href="#cascada">Cascada</a><a href="#conclusiones">Conclusiones</a>
+</div></nav>
+
+<main id="inicio" class="wrap">
+<section>
+<div class="kicker">01 · Presentación</div>
+<h2>¿Qué busco demostrar con este blog?</h2>
+<div class="card">
+<p>En este trabajo no quise quedarme solamente con las definiciones. Mi intención fue relacionar los conceptos con situaciones que podrían encontrarse en un sistema electrónico real y comprobar mediante simulaciones cómo cambian las señales cuando se modifican los componentes.</p>
+<p>Durante el desarrollo fui conectando una idea con otra: una variable física puede ser detectada por un sensor, convertirse en una señal eléctrica y después ser acondicionada mediante amplificadores. Esta relación me permitió entender la electrónica como un proceso completo y no como temas separados.</p>
+</div>
+<div class="quote">Mi aprendizaje principal fue que una ecuación de electrónica se entiende mejor cuando puedo comprobarla con un circuito y observar qué ocurre con la señal.</div>
+</section>
+
+<section id="senales">
+<div class="kicker">02 · Señales</div><h2>Señales análogas y digitales</h2>
+<div class="grid">
+<div class="card"><h3>Señal análoga</h3><p>Una señal análoga cambia de manera continua. Un ejemplo sencillo es la tensión generada por un sensor que representa una temperatura que aumenta gradualmente.</p><p><b>Ejemplo propio:</b> si un sensor entrega 0 V a 0 °C y 5 V a 100 °C, para 60 °C:</p><div class="formula">V = (5/100) · 60 = 3 V</div></div>
+<div class="card"><h3>Señal digital</h3><p>Una señal digital utiliza niveles definidos. Para un sistema sencillo puedo representar 0 V como estado 0 y 5 V como estado 1.</p><p>Esto facilita que sistemas digitales interpreten la información como estados lógicos.</p></div>
+</div>
+<div class="sim">
+<h3>Simulación interactiva 1 · Comparación de señales</h3>
+<div class="controls">
+<label>Frecuencia <input id="freq" type="number" value="1" min=".2" max="5" step=".1"> Hz</label>
+<label>Amplitud <input id="amp" type="number" value="5" min="1" max="10" step=".5"> V</label>
+<button onclick="drawSignals()">Actualizar</button>
+</div>
+<canvas id="signals" width="1000" height="250"></canvas>
+<p class="small muted">La curva representa una señal análoga y la onda cuadrada representa una señal digital.</p>
+</div>
+<div class="card"><h3>Mi análisis</h3><p>Al observar las dos formas de onda, la diferencia más evidente es la continuidad. La señal análoga pasa por todos los valores intermedios, mientras que la digital cambia entre niveles. Esto me ayuda a relacionar la medición física con el procesamiento electrónico.</p></div>
+</section>
+
+<section id="variables">
+<div class="kicker">03 · Instrumentación</div><h2>Variables de proceso</h2>
+<p>Una variable de proceso es una magnitud que puede medirse y controlarse dentro de un sistema. Las más comunes son temperatura, presión, nivel, flujo, humedad, velocidad y posición.</p>
+<div class="grid">
+<div class="card"><h3>Ejemplo propio: tanque</h3><p>Imaginé un tanque donde necesito mantener la temperatura alrededor de 50 °C. La temperatura es la variable de proceso; el sensor obtiene la medida y un controlador puede decidir cuándo activar un calentador.</p><div class="formula">Temperatura → Sensor → Señal → Controlador → Actuador</div></div>
+<div class="card"><h3>¿Por qué es importante?</h3><p>Medir una variable permite conocer el estado del proceso. A partir de esa medición se pueden tomar decisiones automáticas y reducir la necesidad de intervención manual.</p></div>
+</div>
+</section>
+
+<section id="sensores">
+<div class="kicker">04 · Sensores</div><h2>Sensores</h2>
+<p>Un sensor convierte una magnitud física en una señal que puede ser procesada por un sistema electrónico. En este trabajo relacioné los sensores con situaciones cotidianas para entender su función.</p>
+<div class="grid">
+<div class="card"><h3>Temperatura</h3><p>Detecta cambios térmicos y puede utilizarse en sistemas de climatización o procesos industriales.</p></div>
+<div class="card"><h3>Luz</h3><p>Una LDR cambia su comportamiento eléctrico según la iluminación y puede utilizarse para automatizar una lámpara.</p></div>
+<div class="card"><h3>Proximidad</h3><p>Permite detectar la presencia o distancia de objetos y se utiliza en automatización y sistemas de seguridad.</p></div>
+</div>
+<div class="sim">
+<h3>Simulación interactiva 2 · Sensor de luz</h3>
+<div class="controls">
+<label>Iluminación <input id="light" type="range" min="0" max="100" value="50" oninput="drawSensor()"></label>
+</div>
+<canvas id="sensor" width="1000" height="250"></canvas>
+<div id="sensorResult" class="result"></div>
+</div>
+<div class="card"><h3>Mi análisis</h3><p>La idea que me quedó más clara es que el sensor no es el sistema completo: su función es obtener información. Después, esa información debe acondicionarse y procesarse para producir una acción.</p></div>
+</section>
+
+<section id="inteligentes">
+<div class="kicker">05 · Instrumentación moderna</div><h2>Señales inteligentes</h2>
+<p>En este blog uso el término señal inteligente para referirme a sistemas de medición en los que el sensor puede incorporar procesamiento, acondicionamiento, identificación o comunicación de la información.</p>
+<div class="card"><div class="formula">Variable física → Sensor → Procesamiento → Comunicación → Control</div><p>Por ejemplo, un sensor de temperatura moderno puede medir el valor, procesarlo y entregar información lista para que otro sistema la utilice.</p></div>
+<div class="quote">Lo importante no es solamente obtener una señal, sino convertirla en información útil para tomar una decisión dentro del sistema.</div>
+</section>
+
+<section id="inversor">
+<div class="kicker">06 · Amplificadores operacionales</div><h2>Configuración inversora</h2>
+<p>En la configuración inversora, la señal se aplica a la entrada inversora. La salida cambia de polaridad y su ganancia ideal es:</p>
+<div class="formula">A<sub>v</sub> = −R<sub>f</sub>/R<sub>in</sub></div>
+<div class="card"><h3>Mi ejemplo</h3><p>Elegí R<sub>in</sub> = 10 kΩ, R<sub>f</sub> = 30 kΩ y V<sub>in</sub> = 1 V.</p><p>A<sub>v</sub> = −30/10 = −3</p><p>V<sub>out</sub> = −3 · 1 V = <b>−3 V</b>.</p></div>
+<div class="sim">
+<h3>Simulación interactiva 3 · Amplificador inversor</h3>
+<div class="controls">
+<label>Vin <input id="vinInv" type="number" value="1" step=".1"></label>
+<label>Rin (kΩ) <input id="rinInv" type="number" value="10" min="1" step="1"></label>
+<label>Rf (kΩ) <input id="rfInv" type="number" value="30" min="1" step="1"></label>
+<button onclick="drawInv()">Calcular y graficar</button>
+</div>
+<canvas id="inv" width="1000" height="250"></canvas><div id="invResult" class="result"></div>
+</div>
+</section>
+
+<section id="noinversor">
+<div class="kicker">07 · Amplificadores operacionales</div><h2>Configuración no inversora</h2>
+<p>En esta configuración la señal se conecta a la entrada no inversora y la salida conserva la polaridad de la entrada.</p>
+<div class="formula">A<sub>v</sub> = 1 + R<sub>f</sub>/R<sub>1</sub></div>
+<div class="card"><h3>Mi ejemplo</h3><p>Con R<sub>f</sub> = 20 kΩ, R<sub>1</sub> = 10 kΩ y V<sub>in</sub> = 1 V:</p><p>A<sub>v</sub> = 1 + 20/10 = 3</p><p>V<sub>out</sub> = <b>3 V</b>.</p></div>
+<div class="sim">
+<h3>Simulación interactiva 4 · Amplificador no inversor</h3>
+<div class="controls">
+<label>Vin <input id="vinNon" type="number" value="1" step=".1"></label>
+<label>R1 (kΩ) <input id="r1Non" type="number" value="10" min="1" step="1"></label>
+<label>Rf (kΩ) <input id="rfNon" type="number" value="20" min="0" step="1"></label>
+<button onclick="drawNon()">Calcular y graficar</button>
+</div>
+<canvas id="non" width="1000" height="250"></canvas><div id="nonResult" class="result"></div>
+</div>
+</section>
+
+<section id="sumador">
+<div class="kicker">08 · Procesamiento analógico</div><h2>Circuito sumador</h2>
+<p>El sumador permite combinar varias entradas. Para una configuración inversora con resistencias iguales:</p>
+<div class="formula">V<sub>out</sub> = −(V<sub>1</sub> + V<sub>2</sub>)</div>
+<div class="card"><h3>Mi ejemplo</h3><p>Tomé V<sub>1</sub> = 1 V y V<sub>2</sub> = 2 V. Entonces la salida ideal es:</p><p><b>V<sub>out</sub> = −3 V</b>.</p></div>
+<div class="sim">
+<h3>Simulación interactiva 5 · Sumador</h3>
+<div class="controls">
+<label>V1 <input id="v1Sum" type="number" value="1" step=".1"></label>
+<label>V2 <input id="v2Sum" type="number" value="2" step=".1"></label>
+<button onclick="drawSum()">Calcular</button>
+</div>
+<canvas id="sum" width="1000" height="250"></canvas><div id="sumResult" class="result"></div>
+</div>
+</section>
+
+<section id="restador">
+<div class="kicker">09 · Comparación de señales</div><h2>Circuito restador</h2>
+<p>El circuito restador permite obtener una señal proporcional a la diferencia entre dos entradas. Para una configuración de ganancia unitaria:</p>
+<div class="formula">V<sub>out</sub> = V<sub>2</sub> − V<sub>1</sub></div>
+<div class="card"><h3>Mi ejemplo</h3><p>Con V<sub>2</sub> = 5 V y V<sub>1</sub> = 2 V:</p><p><b>V<sub>out</sub> = 3 V</b>.</p><p>Este concepto puede relacionarse con una señal de error: valor deseado − valor medido.</p></div>
+<div class="sim">
+<h3>Simulación interactiva 6 · Restador</h3>
+<div class="controls">
+<label>V1 <input id="v1Res" type="number" value="2" step=".1"></label>
+<label>V2 <input id="v2Res" type="number" value="5" step=".1"></label>
+<button onclick="drawRes()">Calcular</button>
+</div>
+<canvas id="res" width="1000" height="250"></canvas><div id="resResult" class="result"></div>
+</div>
+</section>
+
+<section id="cascada">
+<div class="kicker">10 · Amplificación</div><h2>Amplificadores en cascada</h2>
+<p>Una conexión en cascada utiliza varias etapas de amplificación. La ganancia total ideal es el producto de las ganancias individuales.</p>
+<div class="formula">A<sub>T</sub> = A<sub>1</sub> · A<sub>2</sub> · A<sub>3</sub> ...</div>
+<div class="card"><h3>Mi ejemplo</h3><p>Elegí dos etapas: A<sub>1</sub> = 2 y A<sub>2</sub> = 3. Por tanto:</p><p>A<sub>T</sub> = 2 · 3 = <b>6</b>.</p><p>Con una entrada de 0,5 V, la salida ideal sería 3 V.</p></div>
+<div class="sim">
+<h3>Simulación interactiva 7 · Dos etapas</h3>
+<div class="controls">
+<label>Vin <input id="vinCas" type="number" value=".5" step=".1"></label>
+<label>A1 <input id="a1Cas" type="number" value="2" step=".1"></label>
+<label>A2 <input id="a2Cas" type="number" value="3" step=".1"></label>
+<button onclick="drawCas()">Calcular</button>
+</div>
+<canvas id="cas" width="1000" height="250"></canvas><div id="casResult" class="result"></div>
+</div>
+<div class="card"><h3>Mi análisis</h3><p>La conexión en cascada muestra cómo varias etapas pueden aumentar progresivamente una señal pequeña. En un circuito real también tendría que revisar la alimentación y la saturación del amplificador, porque la salida no puede crecer indefinidamente.</p></div>
+</section>
+
+<section id="conclusiones">
+<div class="kicker">11 · Cierre</div><h2>Conclusiones propias</h2>
+<div class="card">
+<p><b>1.</b> Comprendí que las señales son la forma en que la información física llega al sistema electrónico y que su representación puede ser análoga o digital.</p>
+<p><b>2.</b> Los sensores son el punto de conexión entre el fenómeno físico y el circuito, por lo que su selección depende de la variable que se quiera medir.</p>
+<p><b>3.</b> Las configuraciones de amplificadores operacionales permiten modificar señales de manera controlada. Las simulaciones me ayudaron a comprobar que las ganancias calculadas se reflejan en la salida ideal.</p>
+<p><b>4.</b> Los circuitos sumadores y restadores muestran que un amplificador operacional también puede realizar operaciones matemáticas con señales.</p>
+<p><b>5.</b> Los amplificadores en cascada permiten obtener una ganancia mayor mediante varias etapas, aunque en un circuito físico aparecen límites que deben tenerse en cuenta.</p>
+<p><b>6.</b> La principal utilidad de las simulaciones en este trabajo fue poder cambiar valores y observar inmediatamente cómo se modifica el resultado. Esto hizo que los cálculos dejaran de ser solamente teóricos.</p>
+</div>
+<div class="quote"><b>Reflexión final:</b> Elaborar los ejemplos y observar las señales me permitió entender que la electrónica no consiste solamente en conectar componentes; también implica medir, calcular, comparar resultados y explicar por qué el circuito se comporta de determinada manera.</div>
+</section>
+</main>
+<footer>
+<div class="wrap">Blog académico de Electrónica · Brayan David Sarmiento Vega · 2026</div>
+</footer>
+
+<script>
+function setup(id){let c=document.getElementById(id),x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);x.strokeStyle='#263756';x.lineWidth=1;for(let i=0;i<=10;i++){let xx=i*c.width/10;x.beginPath();x.moveTo(xx,0);x.lineTo(xx,c.height);x.stroke()}for(let i=0;i<=5;i++){let yy=i*c.height/5;x.beginPath();x.moveTo(0,yy);x.lineTo(c.width,yy);x.stroke()}return x}
+function drawSignals(){let x=setup('signals'),c=x.canvas,w=c.width,h=c.height,f=+freq.value,a=+amp.value;x.strokeStyle='#62d6ff';x.lineWidth=3;x.beginPath();for(let i=0;i<w;i++){let t=i/w*4/f;let y=h/2-(Math.sin(2*Math.PI*f*t)*a/(a*1.15))*h/2;if(i)x.lineTo(i,y);else x.moveTo(i,y)}x.stroke();x.strokeStyle='#8b7cff';x.beginPath();for(let i=0;i<w;i++){let t=i/w*4/f;let s=Math.sin(2*Math.PI*f*t)>=0?1:-1;let y=h/2-s*h*.36;if(i)x.lineTo(i,y);else x.moveTo(i,y)}x.stroke()}
+function bar(id,label,val,unit='V'){let x=setup(id),c=x.canvas,w=c.width,h=c.height,max=Math.max(5,Math.abs(val)*1.2),y=h/2-val/max*h*.35;x.fillStyle='#62d6ff';x.fillRect(w*.2, y, w*.6, h/2-y);x.fillStyle='white';x.font='24px Arial';x.fillText(label+': '+val.toFixed(3)+' '+unit,30,40)}
+function drawSensor(){let v=+light.value;bar('sensor','Nivel de señal',v/20);sensorResult.innerHTML='<b>Iluminación:</b> '+v+'% · <b>Señal normalizada:</b> '+(v/20).toFixed(2)+' V<br>En este modelo didáctico, al aumentar la iluminación aumenta la señal representada.'}
+function drawInv(){let vi=+vinInv.value,ri=+rinInv.value,rf=+rfInv.value,av=-rf/ri,vo=av*vi;bar('inv','Vout',vo);invResult.innerHTML='<b>Ganancia:</b> '+av.toFixed(2)+' · <b>Vout:</b> '+vo.toFixed(3)+' V · La salida conserva la magnitud amplificada pero invierte su polaridad.'}
+function drawNon(){let vi=+vinNon.value,r1=+r1Non.value,rf=+rfNon.value,av=1+rf/r1,vo=av*vi;bar('non','Vout',vo);nonResult.innerHTML='<b>Ganancia:</b> '+av.toFixed(2)+' · <b>Vout:</b> '+vo.toFixed(3)+' V · La salida mantiene la polaridad de la entrada.'}
+function drawSum(){let a=+v1Sum.value,b=+v2Sum.value,vo=-(a+b);bar('sum','Vout',vo);sumResult.innerHTML='<b>Vout = −(V1 + V2) = '+vo.toFixed(3)+' V</b>'}
+function drawRes(){let a=+v1Res.value,b=+v2Res.value,vo=b-a;bar('res','Vout',vo);resResult.innerHTML='<b>Vout = V2 − V1 = '+vo.toFixed(3)+' V</b>'}
+function drawCas(){let vi=+vinCas.value,a=+a1Cas.value,b=+a2Cas.value,v1=vi*a,vo=v1*b;bar('cas','Vout',vo);casResult.innerHTML='<b>Etapa 1:</b> '+v1.toFixed(3)+' V · <b>Ganancia total:</b> '+(a*b).toFixed(3)+' · <b>Salida:</b> '+vo.toFixed(3)+' V'}
+drawSignals();drawSensor();drawInv();drawNon();drawSum();drawRes();drawCas();
+</script>
+</body>
+</html>
